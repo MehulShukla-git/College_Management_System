@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Faculty Dashboard{% endblock %}
+
+{% block content %}
+<h1>Faculty Dashboard</h1>
+{% if error %}
+  <div class="alert alert-danger">{{ error }}</div>
+{% else %}
+  <p>Welcome, {{ faculty.user.get_full_name|default:faculty.user.username }}!</p>
+  <h2>Assigned Courses</h2>
+  <ul>
+    {% for course in courses %}
+      <li>{{ course.name }} - <a href="{% url 'faculty:mark_attendance' course.id %}">Mark Attendance</a></li>
+    {% empty %}
+      <li>No courses assigned.</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Create New Assignment</h2>
+  <form method="post" action="{% url 'faculty:create_assignment' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Create Assignment</button>
+  </form>
+
+  <h2>Your Assignments</h2>
+  {% if assignments %}
+    <ul class="list-group">
+      {% for assignment in assignments %}
+        <li class="list-group-item">
+          <h5>{{ assignment.title }}</h5>
+          <p>{{ assignment.description }}</p>
+          <p><strong>Course:</strong> {{ assignment.course.name }}</p>
+          <p><strong>Deadline:</strong> {{ assignment.deadline|date:"F j, Y, g:i a" }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No assignments created yet.</p>
+  {% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1>Admin Dashboard</h1>
+<p>Welcome, Admin {{ user.get_full_name|default:user.username }}!</p>
+
+<h2>All Users</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Role</th>
+      <th>Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in all_users %}
+      <tr>
+        <td>{{ user.username }}</td>
+        <td>{{ user.role }}</td>
+        <td>{{ user.email }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>All Courses</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Duration</th>
+      <th>Faculty</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for course in all_courses %}
+      <tr>
+        <td>{{ course.name }}</td>
+        <td>{{ course.duration }}</td>
+        <td>
+          {% for faculty in course.faculty.all %}
+            {{ faculty.user.username }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>All Students</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Roll No</th>
+      <th>Course</th>
+      <th>Fees Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for student in all_students %}
+      <tr>
+        <td>{{ student.user.username }}</td>
+        <td>{{ student.roll_no }}</td>
+        <td>{{ student.course.name|default:"Not enrolled" }}</td>
+        <td>{{ student.fees_status }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>All Faculty</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Subject</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for faculty in all_faculty %}
+      <tr>
+        <td>{{ faculty.user.username }}</td>
+        <td>{{ faculty.subject }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>All Assignments</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Course</th>
+      <th>Faculty</th>
+      <th>Deadline</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for assignment in all_assignments %}
+      <tr>
+        <td>{{ assignment.title }}</td>
+        <td>{{ assignment.course.name }}</td>
+        <td>{{ assignment.faculty.user.username }}</td>
+        <td>{{ assignment.deadline|date:"F j, Y, g:i a" }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>All Enrollments</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Student</th>
+      <th>Course</th>
+      <th>Faculty</th>
+      <th>Enrolled At</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for enrollment in all_enrollments %}
+      <tr>
+        <td>{{ enrollment.student.user.username }}</td>
+        <td>{{ enrollment.course.name }}</td>
+        <td>{{ enrollment.faculty.user.username }}</td>
+        <td>{{ enrollment.enrolled_at|date:"F j, Y" }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Attendance Summary</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Course</th>
+      <th>Total Sessions</th>
+      <th>Present</th>
+      <th>Absent</th>
+      <th>Attendance %</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for summary in attendance_summary %}
+      <tr>
+        <td>{{ summary.enrollment__course__name }}</td>
+        <td>{{ summary.total }}</td>
+        <td>{{ summary.present }}</td>
+        <td>{{ summary.absent }}</td>
+        <td>{% widthratio summary.present summary.total 100 %}%</td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="5">No attendance records yet.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="row mt-4">
+  <div class="col-md-6">
+    <a href="/admin/" class="btn btn-primary">Django Admin</a>
+    <a href="/students/enroll/" class="btn btn-secondary">Manage Enrollments</a>
+  </div>
+  <div class="col-md-6">
+    <a href="/faculty/mark-attendance/" class="btn btn-info">View All Attendance</a>
+    <a href="/courses/" class="btn btn-success">Manage Courses</a>
+  </div>
+</div>
+{% endblock %}

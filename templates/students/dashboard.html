@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<h1>Student Dashboard</h1>
+{% if error %}
+  <div class="alert alert-danger">{{ error }}</div>
+{% else %}
+  <p>Welcome, {{ user.get_full_name|default:user.username }}!</p>
+  <p>Roll No: {{ student.roll_no }}</p>
+  <p>Fees Status: {{ student.fees_status }}</p>
+
+  <h2>Your Enrollments</h2>
+  {% if enrollments %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Course</th>
+          <th>Faculty</th>
+          <th>Enrolled At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for enrollment in enrollments %}
+          <tr>
+            <td>{{ enrollment.course.name }}</td>
+            <td>{{ enrollment.faculty.user.username }} - {{ enrollment.faculty.subject }}</td>
+            <td>{{ enrollment.enrolled_at|date:"F j, Y" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="{% url 'students:enroll' %}" class="btn btn-primary mb-3">Enroll in Another Course</a>
+  {% else %}
+    <p>You are not enrolled in any courses yet.</p>
+    <a href="{% url 'students:enroll' %}" class="btn btn-primary">Enroll in a Course</a>
+  {% endif %}
+
+  <h2>Your Assignments</h2>
+  {% if assignments %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Course</th>
+          <th>Faculty</th>
+          <th>Deadline</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for assignment in assignments %}
+          <tr>
+            <td>{{ assignment.title }}</td>
+            <td>{{ assignment.course.name }}</td>
+            <td>{{ assignment.faculty.user.username }}</td>
+            <td>{{ assignment.deadline|date:"F j, Y, g:i a" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No assignments available.</p>
+  {% endif %}
+
+  <h2>Mark Daily Attendance</h2>
+  <p>Mark your attendance for today:</p>
+  {% if enrollments %}
+    <form method="post" action="{% url 'students:mark_attendance' %}">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="enrollment" class="form-label">Select Enrollment</label>
+        <select name="enrollment" id="enrollment" class="form-select" required>
+          {% for enrollment in enrollments %}
+            <option value="{{ enrollment.id }}">{{ enrollment.course.name }} - {{ enrollment.faculty.user.username }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-success">Mark Present</button>
+    </form>
+  {% else %}
+    <p>Enroll in a course to mark attendance.</p>
+  {% endif %}
+
+  <h2>Your Attendance Records</h2>
+  <a href="{% url 'students:view_attendance' %}" class="btn btn-info">View My Attendance</a>
+{% endif %}
+{% endblock %}

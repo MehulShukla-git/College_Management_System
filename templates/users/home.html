@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- IdeaMates Banner -->
+<div class="ideamates-banner d-flex align-items-center justify-content-center">
+    <svg class="logo-svg me-2" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#007bff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#28a745;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <circle cx="25" cy="25" r="20" fill="url(#logoGrad)" stroke="#ffffff" stroke-width="2"/>
+        <text x="25" y="30" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">IM</text>
+        <text x="25" y="40" font-family="Arial, sans-serif" font-size="6" fill="#ffffff" text-anchor="middle">IdeaMates</text>
+    </svg>
+    <h3 class="mb-0">Powered by IdeaMates</h3>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-pane" type="button" role="tab" aria-controls="home-pane" aria-selected="true">
+                    <i class="bi bi-house-door me-1"></i>Home
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="courses-tab" data-bs-toggle="tab" data-bs-target="#courses-pane" type="button" role="tab" aria-controls="courses-pane" aria-selected="false">
+                    <i class="bi bi-book me-1"></i>Courses
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="student-tab" data-bs-toggle="tab" data-bs-target="#student-pane" type="button" role="tab" aria-controls="student-pane" aria-selected="false">
+                    <i class="bi bi-person-badge me-1"></i>Student Dashboard
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="faculty-tab" data-bs-toggle="tab" data-bs-target="#faculty-pane" type="button" role="tab" aria-controls="faculty-pane" aria-selected="false">
+                    <i class="bi bi-person-gear me-1"></i>Faculty Dashboard
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="performance-tab" data-bs-toggle="tab" data-bs-target="#performance-pane" type="button" role="tab" aria-controls="performance-pane" aria-selected="false">
+                    <i class="bi bi-bar-chart-line me-1"></i>Performance
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="mainTabsContent">
+            <!-- Home Tab -->
+            <div class="tab-pane fade show active tab-pane-home" id="home-pane" role="tabpanel" aria-labelledby="home-tab">
+                <div class="hero-section">
+                    <h1 class="display-4 fw-bold mb-3">Welcome to College Management System</h1>
+                    <p class="lead mb-4">Streamline your academic journey with our comprehensive platform for students, faculty, and administrators.</p>
+
+                </div>
+            </div>
+            <!-- Courses Tab -->
+            <div class="tab-pane fade tab-pane-courses" id="courses-pane" role="tabpanel" aria-labelledby="courses-tab">
+                <h2>Courses</h2>
+                <div class="row">
+                    {% for course in courses %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ course.name }}</h5>
+                                <p class="card-text">Duration: {{ course.duration }}</p>
+                                <a href="{% url 'courses:detail' course.id %}" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <p>No courses available yet. Check back soon!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+            <!-- Student Dashboard Tab -->
+            <div class="tab-pane fade tab-pane-student" id="student-pane" role="tabpanel" aria-labelledby="student-tab">
+                <h2>Student Dashboard</h2>
+                <p>Here's a quick view of enrolled courses and attendance.</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Enrolled Courses</h4>
+                        {% spaceless %}
+                        <ul class="list-group">
+                            {% for course in enrolled_courses %}
+                            <li class="list-group-item">{{ course.name }} - <small>Enrolled</small></li>
+                            {% empty %}
+                            <li class="list-group-item">No enrolled courses</li>
+                            {% endfor %}
+                        </ul>
+                        {% endspaceless %}
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Attendance Summary</h4>
+                        <p>Overall attendance: 95% <i class="bi bi-check-circle text-success"></i></p>
+                    </div>
+                </div>
+
+            </div>
+            <!-- Faculty Dashboard Tab -->
+            <div class="tab-pane fade tab-pane-faculty" id="faculty-pane" role="tabpanel" aria-labelledby="faculty-tab">
+                <h2>Faculty Dashboard</h2>
+                <p>Manage your courses and mark attendance for students.</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Assigned Courses</h4>
+                        {% spaceless %}
+                        <ul class="list-group">
+                            {% for course in assigned_courses %}
+                            <li class="list-group-item">{{ course.name }} - <a href="/faculty/mark-attendance/{{ course.id }}/">Mark Attendance</a></li>
+                            {% empty %}
+                            <li class="list-group-item">No assigned courses</li>
+                            {% endfor %}
+                        </ul>
+                        {% endspaceless %}
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Upcoming Sessions</h4>
+                        <p>Next class: Today at 10 AM</p>
+                    </div>
+                </div>
+
+            </div>
+            <!-- Performance Tab -->
+            <div class="tab-pane fade tab-pane-performance" id="performance-pane" role="tabpanel" aria-labelledby="performance-tab">
+                <h2>Performance Overview</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Student Performance</h4>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Attendance %</th>
+                                    <th>Result Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for perf in students_performance %}
+                                <tr>
+                                    <td>{{ perf.student.user.username }}</td>
+                                    <td>{{ perf.attendance_pct }}%</td>
+                                    <td>{{ perf.result_score }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3">No data available</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <canvas id="studentChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Faculty Performance</h4>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Faculty</th>
+                                    <th>Attendance %</th>
+                                    <th>Total Students</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for perf in faculty_performance %}
+                                <tr>
+                                    <td>{{ perf.faculty.user.username }}</td>
+                                    <td>{{ perf.attendance_pct }}%</td>
+                                    <td>{{ perf.total_students }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3">No data available</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <canvas id="facultyChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Student Attendance Pie Chart
+    const studentCtx = document.getElementById('studentChart').getContext('2d');
+    const studentData = {
+        labels: ['Present', 'Absent'],
+        datasets: [{
+            data: [{{ total_student_present|default:0 }}, {{ total_student_absent|default:0 }}],
+            backgroundColor: ['#28a745', '#dc3545'],
+        }]
+    };
+    new Chart(studentCtx, {
+        type: 'pie',
+        data: studentData,
+    });
+
+    // Faculty Attendance Pie Chart
+    const facultyCtx = document.getElementById('facultyChart').getContext('2d');
+    const facultyData = {
+        labels: ['Present', 'Absent'],
+        datasets: [{
+            data: [{{ total_faculty_present|default:0 }}, {{ total_faculty_absent|default:0 }}],
+            backgroundColor: ['#007bff', '#ffc107'],
+        }]
+    };
+    new Chart(facultyCtx, {
+        type: 'pie',
+        data: facultyData,
+    });
+</script>
+{% endblock %}

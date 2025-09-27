@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Mark Attendance for {{ course.name }}{% endblock %}
+
+{% block content %}
+<h1>Mark Attendance for {{ course.name }}</h1>
+<form method="post">
+    {% csrf_token %}
+    <label for="date">Date:</label>
+    <input type="date" name="date" value="{{ today }}" required>
+    <br><br>
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Present</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.user.get_full_name|default:student.user.username }} ({{ student.roll_no }})</td>
+                <td><input type="checkbox" name="present" value="{{ student.id }}"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <button type="submit">Save Attendance</button>
+</form>
+<a href="{% url 'faculty:dashboard' %}">Back to Dashboard</a>
+{% endblock %}

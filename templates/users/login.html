@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-image">
+            <img src="https://source.unsplash.com/random/400x600/?login,access" alt="Login Access" class="img-fluid" style="height: 100%; object-fit: cover;">
+        </div>
+        <div class="login-form">
+            <h2 class="text-center mb-4">Login to Your Account</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                    {{ form.username }}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                    {{ form.password }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+            <p class="text-center mt-3">Don't have an account? <a href="{% url 'users:register' %}">Register</a></p>
+        </div>
+    </div>
+</div>
+<style>
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+    }
+    .login-card {
+        display: flex;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        overflow: hidden;
+        max-width: 800px;
+        width: 100%;
+    }
+    .login-image {
+        flex: 1;
+        min-height: 400px;
+    }
+    .login-form {
+        flex: 1;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    @media (max-width: 768px) {
+        .login-card {
+            flex-direction: column;
+        }
+        .login-image {
+            min-height: 200px;
+        }
+    }
+</style>
+{% endblock %}

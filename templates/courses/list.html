@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Courses{% endblock %}
+{% block content %}
+<h1>Courses</h1>
+
+{% if suggested_courses %}
+<h2>Suggested for You</h2>
+<div class="grid">
+  {% for c in suggested_courses %}
+    <div class="card">
+      <h3>{{ c.name }}</h3>
+      <p>Duration: {{ c.duration }}</p>
+      <p>
+        <strong>Faculty:</strong>
+        {% if c.faculty.all %}
+          {% for f in c.faculty.all %}
+            {{ f.user.get_full_name|default:f.user.username }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        {% else %}
+          <em>Not assigned</em>
+        {% endif %}
+      </p>
+
+      <p style="margin-top:12px">
+        <a class="btn btn-outline" href="{% url 'courses:detail' c.id %}">View</a>
+
+        {% if user.is_authenticated and user.role == 'student' %}
+          {% if student and student.course_id == c.id %}
+            <span class="badge">Enrolled</span>
+          {% else %}
+            <a class="btn" href="{% url 'courses:enroll' c.id %}">Enroll</a>
+          {% endif %}
+        {% endif %}
+      </p>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<h2>All Courses</h2>
+<div class="grid">
+  {% for c in courses %}
+    <div class="card">
+      <h3>{{ c.name }}</h3>
+      <p>Duration: {{ c.duration }}</p>
+      <p>
+        <strong>Faculty:</strong>
+        {% if c.faculty.all %}
+          {% for f in c.faculty.all %}
+            {{ f.user.get_full_name|default:f.user.username }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        {% else %}
+          <em>Not assigned</em>
+        {% endif %}
+      </p>
+
+      <p style="margin-top:12px">
+        <a class="btn btn-outline" href="{% url 'courses:detail' c.id %}">View</a>
+
+        {% if user.is_authenticated and user.role == 'student' %}
+          {% if student and student.course_id == c.id %}
+            <span class="badge">Enrolled</span>
+          {% else %}
+            <a class="btn" href="{% url 'courses:enroll' c.id %}">Enroll</a>
+          {% endif %}
+        {% endif %}
+      </p>
+    </div>
+  {% empty %}
+    <div class="card">No courses available.</div>
+  {% endfor %}
+</div>
+{% endblock %}

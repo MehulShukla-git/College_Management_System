@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}{{ course.name }}{% endblock %}
+{% block content %}
+<h1>{{ course.name }}</h1>
+
+<div class="card">
+  <p><strong>Duration:</strong> {{ course.duration }}</p>
+  <p><strong>Faculty:</strong>
+    {% if faculty_list %}
+      {% for f in faculty_list %}
+        {{ f.user.get_full_name|default:f.user.username }}{% if not forloop.last %}, {% endif %}
+      {% endfor %}
+    {% else %}
+      <em>Not assigned</em>
+    {% endif %}
+  </p>
+
+  {% if user.is_authenticated and user.role == 'student' %}
+    {% if student %}
+      {% if student.course_id == course.id %}
+        <div class="muted">You are enrolled in this course.</div>
+      {% else %}
+        <form method="post" action="{% url 'courses:enroll' course.id %}">
+          {% csrf_token %}
+          <button class="btn" type="submit">Enroll</button>
+        </form>
+      {% endif %}
+    {% else %}
+      <div class="muted">Student profile not found.</div>
+    {% endif %}
+  {% else %}
+    <div class="muted">Login as a student to enroll.</div>
+  {% endif %}
+</div>
+{% endblock %}

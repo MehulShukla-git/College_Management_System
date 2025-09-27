@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance for {{ student.user.get_full_name|default:student.user.username }}{% endblock %}
+
+{% block content %}
+<h1>Attendance Records for {{ student.user.get_full_name|default:student.user.username }}</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Course</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+        <tr>
+            <td>{{ record.date }}</td>
+            <td>{{ record.course.name }}</td>
+            <td>{{ record.status }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'faculty:dashboard' %}">Back to Dashboard</a>
+{% endblock %}
